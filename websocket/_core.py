@@ -341,7 +341,9 @@ class WebSocket(object):
                     return self.cont_frame.extract(frame)
 
             elif frame.opcode == ABNF.OPCODE_CLOSE:
-                self.send_close()
+                recv_status = struct.unpack("!H", frame.data[0:2])[0]
+                recv_reason = frame.data[0:2]
+                self.send_close(status=recv_status, reason=recv_reason)
                 return frame.opcode, frame
             elif frame.opcode == ABNF.OPCODE_PING:
                 if len(frame.data) < 126:
